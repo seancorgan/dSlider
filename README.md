@@ -32,7 +32,7 @@ $('.slider').dSlider();
 
 
 ## Options 
-slideDur: 5000 - duration of the slider 
-fadeDur: 800 - fading duration 
-slideSelector - the slide element 
+- slideDur: 5000 - duration of the slider 
+- fadeDur: 800 - fading duration 
+- slideSelector - the slide element 
 
