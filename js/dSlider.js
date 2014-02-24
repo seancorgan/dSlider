@@ -8,6 +8,9 @@ var dSlider = function($container, slideDur,  fadeDur) {
     this.$slides       = this.$container.find(this.slideSelector); 
     this.totalSlides   = this.$slides.length;  
 
+    /**
+     * call when object is instantiated 
+     */
     this.init = function() { 
         this.$slides.eq(0).css('opacity', 1); // show first slide
         
@@ -19,7 +22,9 @@ var dSlider = function($container, slideDur,  fadeDur) {
 
         this.waitForNext(); 
     };
-
+    /**
+     * Builds previous and next buttons
+     */
     this.buildPager = function() {
         this.$pagerList = this.$container.find('.pager_list');
         for(var i = 0; i < this.totalSlides; i++){
@@ -28,11 +33,17 @@ var dSlider = function($container, slideDur,  fadeDur) {
         this.$page = $(this.$pagerList).children('.dSlider-page'); 
         this.$page.eq(0).addClass('active');
     } 
-     
+    
+    /**
+     * Sets the timer for slides to transition. 
+     */
     this.waitForNext = function() { 
         this.sliderTimer = setTimeout($.proxy(this.goToNextSlide, this),this.slideDur);
     }; 
 
+    /**
+     * Go to next slide 
+     */
     this.goToNextSlide = function() { 
         this.nextSlide = this.activeSlide + 1;
         // go back to beginning if we went through all the slides 
@@ -44,6 +55,9 @@ var dSlider = function($container, slideDur,  fadeDur) {
         this.animateSlides();
     }; 
 
+    /**
+     * Go to the previous Slide
+     */
     this.goToPrevSlide = function() { 
         this.nextSlide = this.activeSlide - 1;
         // go to last slide if we are on the first slide. 
@@ -54,12 +68,20 @@ var dSlider = function($container, slideDur,  fadeDur) {
         this.animateSlides();
     };
 
+    /**
+     * Go to a specific slide
+     * @param  {object} event the event object passed from the click @event
+     * @todo - Should be able to pass in a int or an event 
+     */
     this.goToSlide = function(event) { 
         this.nextSlide = $(event.currentTarget).data('target');
         clearTimeout(this.sliderTimer);
         this.animateSlides(); 
     } 
 
+    /**
+     * Fades slides in and out 
+     */
     this.animateSlides = function() {
         if(this.fading || this.activeSlide == this.nextSlide) {
             return false; 
