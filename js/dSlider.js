@@ -142,7 +142,9 @@
                     this.$slides.eq(this.activeSlide).animate({'opacity': 0}, settings.fadeDur, $.proxy(this.finishTransition, this));
                 }
             }
-
+            /**
+             * Execute after the slide has complted its transition. 
+             */
             this.finishTransition = function() {
                 this.$slides.eq(this.activeSlide).removeAttr('style');
                 this.activeSlide = this.nextSlide;
@@ -152,6 +154,9 @@
                 this.waitForNext();
             }; 
 
+            /**
+             * css3 specific animation
+             */
             this.css3animate = function() { 
                 this.$slides.eq(this.activeSlide).css('z-index', 3);
                 this.$slides.eq(this.nextSlide).css({
@@ -181,8 +186,3 @@
     };
  
 }( jQuery ));
-
-
-$(document).ready(function() { 
-     $('.fader').dSlider();    
-}); 
