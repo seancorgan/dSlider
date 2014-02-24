@@ -110,12 +110,15 @@ var dSlider = function($container, slideDur,  fadeDur) {
      * Fades slides in and out 
      */
     this.animateSlides = function() {
+        // prevents changing slide while slider is fading. 
+        if(this.fading || this.activeSlide == this.nextSlide) {
+            return false; 
+        }
+
         if(this.prefix || this.prefix === "") { 
             this.css3animate(); 
         } else { 
-            if(this.fading || this.activeSlide == this.nextSlide) {
-                return false; 
-            }
+            
 
             this.$slides.eq(this.nextSlide).css({
                     'z-index': 2,
@@ -154,7 +157,8 @@ var dSlider = function($container, slideDur,  fadeDur) {
         styles.opacity = 0;
         
         this.$slides.eq(this.activeSlide).css(styles);
-        this.fading = true; 
+        this.fading = true;
+
         // now wait for animation to end
         var fadeTimer = setTimeout($.proxy(this.finishTransition, this),this.fadeDur);
     }
