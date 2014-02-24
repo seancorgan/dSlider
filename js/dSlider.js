@@ -6,24 +6,26 @@ var dSlider = function($container, slideDur,  fadeDur) {
     this.fadeDur       = fadeDur; // Fading Duration
     this.slideSelector = ".slide";  // Slide elements
     this.$slides       = this.$container.find(this.slideSelector); 
-    this.totalSlides   = this.$slides.length;
-    this.fading        = false;  
+    this.totalSlides   = this.$slides.length;  
 
     this.init = function() { 
         this.$slides.eq(0).css('opacity', 1); // show first slide
         
         this.buildPager(); 
+        // events 
         $('.dSlider-next').on('click', $.proxy(this.goToNextSlide, this));
-        $('.dSlider-prev').on('click', $.proxy(this.goToPrevSlide, this)); 
+        $('.dSlider-prev').on('click', $.proxy(this.goToPrevSlide, this));
+        $('.dSlider-page').on('click', $.proxy(this.goToSlide, this)); 
+
         this.waitForNext(); 
     };
 
     this.buildPager = function() {
         this.$pagerList = this.$container.find('.pager_list');
         for(var i = 0; i < this.totalSlides; i++){
-            this.$pagerList.append('<li class="page" data-target="'+i+'">'+i+'</li>'); 
+            this.$pagerList.append('<li class="dSlider-page" data-target="'+i+'">'+i+'</li>'); 
         };
-        this.$page = $(this.$pagerList).children('.page'); 
+        this.$page = $(this.$pagerList).children('.dSlider-page'); 
         this.$page.eq(0).addClass('active');
     } 
      
@@ -50,10 +52,16 @@ var dSlider = function($container, slideDur,  fadeDur) {
         }
         clearTimeout(this.sliderTimer); 
         this.animateSlides();
-    }; 
+    };
+
+    this.goToSlide = function(event) { 
+        this.nextSlide = $(event.currentTarget).data('target');
+        clearTimeout(this.sliderTimer);
+        this.animateSlides(); 
+    } 
 
     this.animateSlides = function() {
-        if(this.fading || this.activeSlide == this.newSlide) {
+        if(this.fading || this.activeSlide == this.nextSlide) {
             return false; 
         }
 
@@ -68,7 +76,7 @@ var dSlider = function($container, slideDur,  fadeDur) {
             this.activeSlide = this.nextSlide;
             this.fading = false;
             this.waitForNext();
-            this.$page.removeClass('active').eq(this.newSlide).addClass('active');
+            this.$page.removeClass('active').eq(this.nextSlide).addClass('active');
         }, this));
     }
 
