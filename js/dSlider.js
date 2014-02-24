@@ -1,3 +1,12 @@
+/**
+ * A light weight Plugin to man handle sliders
+ * @param  {object} $container the wrap containing the sldies
+ * @param  {[type]} slideDur   The duration between slide transitions
+ * @param  {[type]} fadeDur    The duration which a slide fades into another slide. 
+ * @todo - ie8 does not support opacity, we need to do a show hide instead. 
+ * @todo - turn into a Jquery plugin 
+ * @todo - use css3 transitions 
+ */
 var dSlider = function($container, slideDur,  fadeDur) { 
 
     this.$container    = $($container); // Slide container
