@@ -1,11 +1,10 @@
 /**
  * A light weight Plugin to man handle sliders
  * @param  {object} $container the wrap containing the sldies
- * @param  {[type]} slideDur   The duration between slide transitions
- * @param  {[type]} fadeDur    The duration which a slide fades into another slide. 
+ * @param  {int} slideDur   The duration between slide transitions
+ * @param  {int} fadeDur    The duration which a slide fades into another slide. 
  * @todo - ie8 does not support opacity, we need to do a show hide instead. 
  * @todo - turn into a Jquery plugin 
- * @todo - use css3 transitions 
  */
 var dSlider = function($container, slideDur,  fadeDur) { 
 
@@ -29,8 +28,27 @@ var dSlider = function($container, slideDur,  fadeDur) {
         $('.dSlider-prev').on('click', $.proxy(this.goToPrevSlide, this));
         $('.dSlider-page').on('click', $.proxy(this.goToSlide, this)); 
 
+        this.css3check(); 
         this.waitForNext(); 
     };
+
+    /**
+     * Checks browser support for css3 transitions 
+     * @return {string} if returns false there is no support.
+     * Otherwise it will return the needed prefix, else a empty string if no prefix is needed. 
+     */
+    this.css3check = function() { 
+        var prefixes = ["Webkit", "Moz", "O", "ms"];
+        var el = this.$container[0];
+
+        for (var i = 0; i < prefixes.length; i++){
+            if (prefixes[i] + "Transition" in el.style){
+                    this.prefix = '-'+prefixes[i].toLowerCase()+'-';
+            };
+        };
+        this.prefix = "transition" in el.style ? "" : false;
+    }
+
     /**
      * Builds previous and next buttons
      */
@@ -92,23 +110,53 @@ var dSlider = function($container, slideDur,  fadeDur) {
      * Fades slides in and out 
      */
     this.animateSlides = function() {
-        if(this.fading || this.activeSlide == this.nextSlide) {
-            return false; 
-        }
+        if(this.prefix || this.prefix === "") { 
+            this.css3animate(); 
+        } else { 
+            if(this.fading || this.activeSlide == this.nextSlide) {
+                return false; 
+            }
 
-        this.fading = true; 
+            this.$slides.eq(this.nextSlide).css({
+                    'z-index': 2,
+                    'opacity': 1
+            }); 
+            this.fading = true; 
+            this.$slides.eq(this.activeSlide).css('z-index', 3);
+
+            $slides.eq(this.nextSlide).css({
+                    'z-index': 2,
+                    'opacity': 1
+                });
+
+            this.$slides.eq(this.activeSlide).animate({'opacity': 0}, this.fadeDur, $.proxy(this.finishTransition, this));
+        }
+    }
+
+    this.finishTransition = function() {
+        this.$slides.eq(this.activeSlide).removeAttr('style');
+        this.activeSlide = this.nextSlide;
+
+        this.fading = false;
+        this.$page.removeClass('active').eq(this.nextSlide).addClass('active');
+        this.waitForNext();
+    }; 
+
+    this.css3animate = function() { 
         this.$slides.eq(this.activeSlide).css('z-index', 3);
         this.$slides.eq(this.nextSlide).css({
-            'z-index': 2,
-            'opacity': 1
-        });
+                        'z-index': 2,
+                        'opacity': 1
+                    });
+
+        var styles = {};
+        styles[this.prefix+'transition'] = 'opacity '+this.fadeDur+'ms ease-in-out';
+        styles.opacity = 0;
         
-        this.$slides.eq(this.activeSlide).animate({'opacity': 0}, this.fadeDur, $.proxy(function () {
-            this.activeSlide = this.nextSlide;
-            this.fading = false;
-            this.waitForNext();
-            this.$page.removeClass('active').eq(this.nextSlide).addClass('active');
-        }, this));
+        this.$slides.eq(this.activeSlide).css(styles);
+        this.fading = true; 
+        // now wait for animation to end
+        var fadeTimer = setTimeout($.proxy(this.finishTransition, this),this.fadeDur);
     }
 
     // initilize 
@@ -116,5 +164,5 @@ var dSlider = function($container, slideDur,  fadeDur) {
 }
 
 $(document).ready(function() { 
-     var slider1 = new dSlider('.fader', 5000, 1000);     
+     var slider1 = new dSlider('.fader', 5000, 500);     
 }); 
