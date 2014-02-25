@@ -14,7 +14,7 @@
 
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
-        <link rel="stylesheet" href="css/slider.css">
+        <link rel="stylesheet" href="css/dSlider.css">
         <script src="js/vendor/modernizr-2.6.2.min.js"></script>
     </head>
     <body>
@@ -23,9 +23,16 @@
         <![endif]-->
 
         <!-- Add your site or application content here -->
-        <div class="fader">
-            <img class="slide" src="img/slide1bg.jpg" alt="">
-            <img class="slide" src="img/slide5bg.jpg" alt="">
+        <div class="slider">
+            
+            <div class="slide">
+                <div class="left-half">
+                    <img src="img/lefthalf1.jpg">
+                </div>
+                <div class="right-half">
+                    <img src="img/righthalf.jpg">
+                </div>    
+            </div>
 
             <div class="dSlider_controls">
                 <div class="dSlider-prev" data-target="prev" >Previous</div>
@@ -40,6 +47,7 @@
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
         <script src="js/plugins.js"></script>
         <script src="js/dSlider.js"></script>
+        <script src="js/scripts.js"></script>
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <script>

@@ -1,4 +1,4 @@
-.fader{
+.slider {
     position: relative;
     /* This is a neat trick we can use to scale the height of the element based on its width,
      rather than the height of its parent container.  For a slideshow with a fixed aspect ratio, 
@@ -8,15 +8,39 @@
     overflow: hidden;
 } 
  
-.fader .slide{
+.slider .slide{
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
     z-index: 1;
-    opacity: 0;
+    opacity: 1;
 }
  
-.fader img.slide{
+.slider img.slide{
     height: auto;
+}
+
+.left-half { 
+    width: 50%;
+    position: absolute;
+    top: 0;
+    left: 0; 
+}
+
+.left-half img { 
+    width: 100%; 
+    height: auto; 
+}
+
+.right-half { 
+    width: 50%;
+    position: absolute;
+    top: 0;
+    right: 0;
+} 
+
+.right-half img { 
+    width: 100%; 
+    height: auto; 
 }
