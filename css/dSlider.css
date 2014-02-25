@@ -4,7 +4,7 @@
      rather than the height of its parent container.  For a slideshow with a fixed aspect ratio, 
      this is going to be crucial to our responsive behavior. I’ve opted for an aspect ratio of 5:3, 
      or in other words, the height is 60% of the width.*/ 
-    padding-top: 60%;
+    padding-top: 50%;
     overflow: hidden;
 } 
  
@@ -14,33 +14,30 @@
     height: 100%;
     top: 0;
     z-index: 1;
-    opacity: 1;
-}
- 
-.slider img.slide{
+    opacity: 0;
     height: auto;
 }
 
 .left-half { 
-    width: 50%;
     position: absolute;
-    top: 0;
+    width: 50%;
     left: 0; 
+}
+ 
+.right-half { 
+    position: absolute;
+    width: 50%;
+    right: 0; 
 }
 
 .left-half img { 
-    width: 100%; 
-    height: auto; 
+    width: 100%;
+    height: auto;
+    position: absolute;
 }
 
-.right-half { 
-    width: 50%;
-    position: absolute;
-    top: 0;
-    right: 0;
-} 
-
 .right-half img { 
-    width: 100%; 
-    height: auto; 
+    width: 100%;
+    height: auto;
+    position: absolute;
 }

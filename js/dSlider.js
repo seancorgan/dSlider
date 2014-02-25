@@ -12,6 +12,7 @@
         var settings = $.extend({
             slideDur: 5000, // duration of the slider 
             fadeDur: 800, // fading duration 
+            animateHalfsDur: '2s',  
             slideSelector: ".slide"
         }, options );
 
@@ -36,6 +37,7 @@
                 $('.dSlider-page').on('click', $.proxy(this.goToSlide, this));
 
                 this.css3check(); 
+                this.animateHalfs();
                 this.waitForNext(); 
             };
 
@@ -142,10 +144,46 @@
                     this.$slides.eq(this.activeSlide).animate({'opacity': 0}, settings.fadeDur, $.proxy(this.finishTransition, this));
                 }
             }
+
+            this.animateHalfs = function() { 
+                var $leftHalf = this.$slides.eq(this.activeSlide).find('.left-half img');
+                var $rightHalf = this.$slides.eq(this.activeSlide).find('.right-half img');
+
+                var animateLength = $leftHalf.width();
+
+                console.log(animateLength); 
+
+                $leftHalf.css('left: -'+animateLength+'px;');
+
+                $leftHalf.css({
+                    'left': '-'+animateLength+'px'
+                }); 
+
+                $rightHalf.css({
+                    'right': '-'+animateLength+'px'
+                });
+
+                var leftStyles = {};
+                leftStyles[this.prefix+'transition'] = 'all '+settings.animateHalfsDur+' ease-in-out';
+                leftStyles[this.prefix+'transform'] = 'translate('+animateLength+'px,0)';
+
+                var rightStyles = {};
+                rightStyles[this.prefix+'transition'] = 'all '+settings.animateHalfsDur+' ease-in-out';
+                rightStyles[this.prefix+'transform'] = 'translate(-'+animateLength+'px,0)';
+
+                $leftHalf.css(leftStyles);
+                $rightHalf.css(rightStyles); 
+            }; 
+
+
             /**
              * Execute after the slide has complted its transition. 
              */
             this.finishTransition = function() {
+
+                // this.animateHalfs(); 
+
+
                 this.$slides.eq(this.activeSlide).removeAttr('style');
                 this.activeSlide = this.nextSlide;
 
