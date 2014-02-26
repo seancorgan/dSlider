@@ -12,7 +12,7 @@
         var settings = $.extend({
             slideDur: 5000, // duration of the slider 
             fadeDur: 800, // fading duration 
-            animateHalfsDur: '2s',  
+            animateHalfsDur: 2000,  
             slideSelector: ".slide"
         }, options );
 
@@ -148,10 +148,7 @@
             this.animateHalfs = function() { 
                 var $leftHalf = this.$slides.eq(this.activeSlide).find('.left-half img');
                 var $rightHalf = this.$slides.eq(this.activeSlide).find('.right-half img');
-
-                var animateLength = $leftHalf.width();
-
-                console.log(animateLength); 
+                var animateLength = $leftHalf.width();; 
 
                 $leftHalf.css('left: -'+animateLength+'px;');
 
@@ -162,17 +159,52 @@
                 $rightHalf.css({
                     'right': '-'+animateLength+'px'
                 });
+             
+                if(this.prefix || this.prefix === "") { 
 
-                var leftStyles = {};
-                leftStyles[this.prefix+'transition'] = 'all '+settings.animateHalfsDur+' ease-in-out';
-                leftStyles[this.prefix+'transform'] = 'translate('+animateLength+'px,0)';
+                    var leftStyles = {};
+                    leftStyles[this.prefix+'transition'] = 'all '+settings.animateHalfsDur+'ms ease-in-out';
+                    leftStyles[this.prefix+'transform'] = 'translate('+animateLength+'px,0)';
 
-                var rightStyles = {};
-                rightStyles[this.prefix+'transition'] = 'all '+settings.animateHalfsDur+' ease-in-out';
-                rightStyles[this.prefix+'transform'] = 'translate(-'+animateLength+'px,0)';
+                    var rightStyles = {};
+                    rightStyles[this.prefix+'transition'] = 'all '+settings.animateHalfsDur+'ms ease-in-out';
+                    rightStyles[this.prefix+'transform'] = 'translate(-'+animateLength+'px,0)';
 
-                $leftHalf.css(leftStyles);
-                $rightHalf.css(rightStyles); 
+                    $leftHalf.css(leftStyles);
+                    $rightHalf.css(rightStyles);
+
+                } else { 
+
+                    var options = {
+                        duration : settings.animateHalfsDur, 
+                        easing : 'swing', 
+                        done: function() { 
+                            console.log('complete');
+                        }
+                    }
+
+                    console.log(options);
+
+                    $leftHalf.animate({
+                        left: 0 
+                    }, 
+                    {
+                        duration : settings.animateHalfsDur, 
+                        easing : 'swing'
+                    });
+
+
+                    $rightHalf.animate({
+                        right: 0 
+                    }, 
+                    {
+                        duration : settings.animateHalfsDur, 
+                        easing : 'swing', 
+                        done: function() { 
+                            console.log('complete');
+                        } 
+                    });
+                }                 
             }; 
 
 
@@ -182,8 +214,6 @@
             this.finishTransition = function() {
 
                 // this.animateHalfs(); 
-
-
                 this.$slides.eq(this.activeSlide).removeAttr('style');
                 this.activeSlide = this.nextSlide;
 
