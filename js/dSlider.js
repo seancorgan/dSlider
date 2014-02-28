@@ -1,8 +1,6 @@
-/**
+/** Author: Sean Corgan @seancorgan
+/** 
  * A light weight Plugin to man handle sliders
- * @param  {object} $container the wrap containing the sldies
- * @param  {int} slideDur   The duration between slide transitions
- * @param  {int} fadeDur    The duration which a slide fades into another slide. 
  * @todo - ie8 does not support opacity, we need to do a show hide instead. 
  **/ 
 
@@ -37,7 +35,7 @@
                 $('.dSlider-page').on('click', $.proxy(this.goToSlide, this));
 
                 this.css3check(); 
-                this.animateHalfs();
+                this.transitionHalfsIn();
                 this.waitForNext(); 
             };
 
@@ -113,7 +111,22 @@
                 this.nextSlide = $(event.currentTarget).data('target');
                 clearTimeout(this.sliderTimer);
                 this.animateSlides(); 
-            } 
+            }
+
+            this.setInitHalf = function() { 
+                var $leftHalf = this.$slides.eq(this.nextSlide).find('.left-half img');
+                var $rightHalf = this.$slides.eq(this.nextSlide).find('.right-half img');
+
+                var animateLength = $leftHalf.width();; 
+
+                $leftHalf.css({
+                    'left': '-'+animateLength+'px'
+                }); 
+
+                $rightHalf.css({
+                    'right': '-'+animateLength+'px'
+                });
+            };  
 
             /**
              * Fades slides in and out 
@@ -124,11 +137,12 @@
                     return false; 
                 }
 
+                this.setInitHalf(); 
+
                 if(this.prefix || this.prefix === "") { 
                     this.css3animate(); 
                 } else { 
                     
-
                     this.$slides.eq(this.nextSlide).css({
                             'z-index': 2,
                             'opacity': 1
@@ -145,20 +159,12 @@
                 }
             }
 
-            this.animateHalfs = function() { 
+            this.transitionHalfsIn = function() { 
+
                 var $leftHalf = this.$slides.eq(this.activeSlide).find('.left-half img');
                 var $rightHalf = this.$slides.eq(this.activeSlide).find('.right-half img');
-                var animateLength = $leftHalf.width();; 
 
-                $leftHalf.css('left: -'+animateLength+'px;');
-
-                $leftHalf.css({
-                    'left': '-'+animateLength+'px'
-                }); 
-
-                $rightHalf.css({
-                    'right': '-'+animateLength+'px'
-                });
+                var animateLength = $leftHalf.width(); 
              
                 if(this.prefix || this.prefix === "") { 
 
@@ -174,16 +180,6 @@
                     $rightHalf.css(rightStyles);
 
                 } else { 
-
-                    var options = {
-                        duration : settings.animateHalfsDur, 
-                        easing : 'swing', 
-                        done: function() { 
-                            console.log('complete');
-                        }
-                    }
-
-                    console.log(options);
 
                     $leftHalf.animate({
                         left: 0 
@@ -212,11 +208,13 @@
              * Execute after the slide has complted its transition. 
              */
             this.finishTransition = function() {
-
-                // this.animateHalfs(); 
                 this.$slides.eq(this.activeSlide).removeAttr('style');
-                this.activeSlide = this.nextSlide;
 
+                this.$slides.eq(this.activeSlide).find('.left-half img').removeAttr('style');
+                this.$slides.eq(this.activeSlide).find('.right-half img').removeAttr('style');
+
+                this.activeSlide = this.nextSlide;
+                this.transitionHalfsIn();
                 this.fading = false;
                 this.$page.removeClass('active').eq(this.nextSlide).addClass('active');
                 this.waitForNext();
