@@ -167,7 +167,6 @@
 
                 this.transitioning = false;
                 this.$page.removeClass('active').eq(this.nextSlide).addClass('active');
-
                 
                 this.activeSlide = this.nextSlide; 
                 this.waitForNext();
@@ -213,27 +212,6 @@
                     });
                 }                 
             }; 
-
-            /**
-             * css3 specific animation
-             */
-            this.css3animate = function() { 
-                this.$slides.eq(this.activeSlide).css('z-index', 3);
-                this.$slides.eq(this.nextSlide).css({
-                                'z-index': 2,
-                                'opacity': 1
-                            });
-
-                var styles = {};
-                styles[this.prefix+'transition'] = 'opacity '+settings.fadeDur+'ms ease-in-out';
-                styles.opacity = 0;
-                
-                this.$slides.eq(this.activeSlide).css(styles);
-                this.fading = true;
-
-                // now wait for animation to end
-                var fadeTimer = setTimeout($.proxy(this.finishTransition, this),settings.fadeDur);
-            }
 
             // initilize 
             this.init();    
