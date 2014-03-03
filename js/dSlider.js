@@ -6,7 +6,7 @@
 
 (function( $ ) {
     $.fn.dSlider = function(options) {
- 
+        
         var settings = $.extend({
             slideDur: 5000, // duration of the slider 
             fadeDur: 800, // fading duration 
@@ -27,15 +27,13 @@
              */
             this.init = function() { 
                 this.$slides.eq(0).css('opacity', 1); // show first slide
-
+                this.nextSlide = 1; 
                 this.buildPager(); 
                 // events 
                 $('.dSlider-next').on('click', $.proxy(this.goToNextSlide, this));
                 $('.dSlider-prev').on('click', $.proxy(this.goToPrevSlide, this));
                 $('.dSlider-page').on('click', $.proxy(this.goToSlide, this));
-
                 this.css3check(); 
-                this.transitionHalfsIn();
                 this.waitForNext(); 
             };
 
@@ -81,6 +79,7 @@
             this.goToNextSlide = function() { 
                 this.nextSlide = this.activeSlide + 1;
                 // go back to beginning if we went through all the slides 
+                
                 if(this.nextSlide > this.totalSlides - 1){ 
                     this.nextSlide = 0;
                 }
@@ -133,36 +132,51 @@
              */
             this.animateSlides = function() {
                 // prevents changing slide while slider is fading. 
-                if(this.fading || this.activeSlide == this.nextSlide) {
+                if(this.transitioning || this.activeSlide == this.nextSlide) {
+                    console.log('no go');
                     return false; 
                 }
 
-                this.setInitHalf(); 
+                // Set the next slide to display on top of the old slide 
+                this.$slides.eq(this.nextSlide).css({
+                    'opacity': 1,  
+                    'z-index': 3   
+                });
 
-                if(this.prefix || this.prefix === "") { 
-                    this.css3animate(); 
-                } else { 
-                    
-                    this.$slides.eq(this.nextSlide).css({
-                            'z-index': 2,
-                            'opacity': 1
-                    }); 
-                    this.fading = true; 
-                    this.$slides.eq(this.activeSlide).css('z-index', 3);
+                this.$slides.eq(this.activeSlide).css({
+                    'z-index': 1
+                });  
 
-                    $slides.eq(this.nextSlide).css({
-                            'z-index': 2,
-                            'opacity': 1
-                        });
+                this.setInitHalf();
+                // Close Door Effect 
+                this.doorClose(); 
 
-                    this.$slides.eq(this.activeSlide).animate({'opacity': 0}, settings.fadeDur, $.proxy(this.finishTransition, this));
-                }
+                // Wait until timer expires then hide active slide. 
+                this.transitioning = true; 
+                var halfsTimer = setTimeout($.proxy(this.finishTransition, this),settings.animateHalfsDur); 
             }
 
-            this.transitionHalfsIn = function() { 
+            this.finishTransition = function() { 
+                this.$slides.eq(this.activeSlide).css({
+                    'opacity' : 0, 
+                    'z-index': 0 
+                });
 
-                var $leftHalf = this.$slides.eq(this.activeSlide).find('.left-half img');
-                var $rightHalf = this.$slides.eq(this.activeSlide).find('.right-half img');
+                this.$slides.eq(this.activeSlide).find('.left-half img').removeAttr('style');
+                this.$slides.eq(this.activeSlide).find('.right-half img').removeAttr('style');
+
+                this.transitioning = false;
+                this.$page.removeClass('active').eq(this.nextSlide).addClass('active');
+
+                
+                this.activeSlide = this.nextSlide; 
+                this.waitForNext();
+            }
+
+            this.doorClose = function() { 
+
+                var $leftHalf = this.$slides.eq(this.nextSlide).find('.left-half img');
+                var $rightHalf = this.$slides.eq(this.nextSlide).find('.right-half img');
 
                 var animateLength = $leftHalf.width(); 
              
@@ -195,29 +209,9 @@
                     }, 
                     {
                         duration : settings.animateHalfsDur, 
-                        easing : 'swing', 
-                        done: function() { 
-                            console.log('complete');
-                        } 
+                        easing : 'swing'
                     });
                 }                 
-            }; 
-
-
-            /**
-             * Execute after the slide has complted its transition. 
-             */
-            this.finishTransition = function() {
-                this.$slides.eq(this.activeSlide).removeAttr('style');
-
-                this.$slides.eq(this.activeSlide).find('.left-half img').removeAttr('style');
-                this.$slides.eq(this.activeSlide).find('.right-half img').removeAttr('style');
-
-                this.activeSlide = this.nextSlide;
-                this.transitionHalfsIn();
-                this.fading = false;
-                this.$page.removeClass('active').eq(this.nextSlide).addClass('active');
-                this.waitForNext();
             }; 
 
             /**

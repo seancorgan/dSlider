@@ -1,3 +1,5 @@
 $( document ).ready(function() {
-	 $('.slider').dSlider(); 
+	 $('.slider').dSlider({
+	 	slideDur: 3000
+	 }); 
 });
